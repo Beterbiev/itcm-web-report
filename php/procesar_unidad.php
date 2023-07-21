@@ -1,4 +1,8 @@
 <?php
+require_once '../vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 // Verificar si se recibió un archivo y si no hay errores en la carga
 if ($_FILES["archivo"]["error"] === UPLOAD_ERR_OK) {
     $nombreArchivo = $_FILES["archivo"]["name"];
@@ -7,8 +11,6 @@ if ($_FILES["archivo"]["error"] === UPLOAD_ERR_OK) {
     // Aquí puedes realizar la lógica para procesar el archivo recibido
 
     // Por ejemplo, puedes utilizar la biblioteca PhpSpreadsheet para leer los datos del archivo Excel
-    require 'vendor/autoload.php'; // Asegúrate de incluir la ruta correcta al archivo autoload.php
-    use PhpOffice\PhpSpreadsheet\IOFactory;
 
     // Cargar el archivo
     $spreadsheet = IOFactory::load($rutaArchivoTemp);
