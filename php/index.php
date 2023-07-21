@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tabla de Materias y Tareas</title>
+    <title>Materias y Tareas</title>
 </head>
 <body>
 
-<h1>Tabla de Materias</h1>
+<h1>Materias</h1>
 
 <!-- Mostrar los datos en una tabla HTML -->
 <table id="tablaDatos">
     <tr>
         <th>Materia</th>
         <th>Grupo</th>
-        <th>Unidades</th>
-        <th></th>
+        <th>Unidad</th>
+        <th>Cargar</th>
     </tr>
 </table>
 
-<h1>Tabla de Tareas</h1>
+<h1>Tareas</h1>
   <table>
     <tr>
       <th>Tarea</th>
