@@ -18,6 +18,10 @@ function agregarInputCargar(row) {
   inputCargar.type = "file";
   inputCargar.accept = ".xlsx, .xls"; // Establecer el atributo accept para archivos Excel
 
+  // Obtener los valores de clave_grupo y numero_unidad al seleccionar el archivo
+  var grupoCellValue = row.cells[1].innerHTML; // Valor de la celda de grupoCell (clave_grupo)
+  var unidadesCellValue = row.cells[2].getElementsByTagName("select")[0].value; // Valor del select de unidadesCell (numero_unidad)
+
   // Agregar un evento al input para manejar el archivo seleccionado
   inputCargar.addEventListener("change", function () {
       var file = inputCargar.files[0];
@@ -25,6 +29,8 @@ function agregarInputCargar(row) {
           // Crear un objeto FormData para enviar el archivo al servidor
           var formData = new FormData();
           formData.append("archivo", file);
+          formData.append("grupo", grupoCellValue);
+          formData.append("unidad", unidadesCellValue);
 
           // Realizar una solicitud AJAX para enviar el archivo al servidor
           var xhr = new XMLHttpRequest();
