@@ -5,16 +5,13 @@ document.addEventListener("DOMContentLoaded", function() {
   // Función para crear una fila en la tabla con los datos proporcionados
   function crearFila(datos) {
     var row = document.createElement("tr");
-    var fichaCell = document.createElement("td");
     var nombreMateriaCell = document.createElement("td");
     var claveGrupoCell = document.createElement("td");
     var eliminarCell = document.createElement("td"); // Nueva celda para el botón "Eliminar"
 
-    fichaCell.textContent = datos.ficha;
     nombreMateriaCell.textContent = datos.nombre_materia;
     claveGrupoCell.textContent = datos.clave_grupo;
 
-    row.appendChild(fichaCell);
     row.appendChild(nombreMateriaCell);
     row.appendChild(claveGrupoCell);
 
