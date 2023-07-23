@@ -3,8 +3,7 @@
 <head>
   <title>Reportes Académicos</title>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/reportes.js" charset="UTF-8"></script>
+  <script src="../js/reportes.js" charset="UTF-8"></script>
 </head>
 <body>
   <h1>Reportes Académicos</h1>

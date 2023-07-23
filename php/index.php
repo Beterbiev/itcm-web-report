@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Materias y Tareas</title>
+    <script src="../js/index.js"></script>
 </head>
 <body>
 
@@ -25,15 +26,15 @@
     </tr>
     <tr>
       <td>Cargar datos en web</td>
-      <td><a href="carga_manual.html" class="button">Cargar manual</a></td>
+      <td><a href="carga_manual.php" class="button">Cargar manual</a></td>
     </tr>
     <tr>
       <td>Reportes académicos</td>
-      <td><a href="reportes.html" class="button">Generar</a></td>
+      <td><a href="reportes.php" class="button">Generar</a></td>
     </tr>
     <tr>
       <td>Administrar grupos</td>
-      <td><a href="admin_grupos.html" class="button">Administrar</a></td>
+      <td><a href="admin_grupos.php" class="button">Administrar</a></td>
     </tr>
     <tr>
       <td>Alumnos</td>
@@ -43,9 +44,6 @@
       </td>
     </tr>
   </table>
-
-<!-- Incluir el archivo JavaScript -->
-<script src="../js/index.js"></script>
 
 <?php
 // Realizar la conexión a la base de datos

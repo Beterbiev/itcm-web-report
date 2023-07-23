@@ -3,8 +3,7 @@
 <head>
   <title>Carga Manual</title>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/carga_manual.js" charset="UTF-8"></script>
+  <script src="../js/carga_manual.js" charset="UTF-8"></script>
 </head>
 <body>
   <h1>Carga Manual</h1>
@@ -65,6 +64,25 @@
   <div style="text-align: center;">
     <button id="guardar-btn" class="button">Registrar</button>
   </div>
+
+<?php
+// Realizar la conexión a la base de datos
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "reportes_escolares";
+$port = 3306;
+
+$conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+// Verificar si hay errores en la conexión
+if ($conn->connect_error) {
+    die("Error en la conexión: " . $conn->connect_error);
+}
+
+// Cerrar la conexión
+$conn->close();
+?>
 
 </body>
 </html>
