@@ -37,31 +37,57 @@ CREATE TABLE materias (
 
 CREATE TABLE grupos (
   clave_grupo VARCHAR(255) PRIMARY KEY,
+  ficha INT(4) UNSIGNED ZEROFILL,  -- Agregamos la columna ficha para el merge
   clave_materia VARCHAR(255),
   grupo VARCHAR(255),
   periodo_nombre VARCHAR(255),
   FOREIGN KEY (clave_materia) REFERENCES materias(clave_materia),
-  FOREIGN KEY (periodo_nombre) REFERENCES periodos_escolares(nombre) ON DELETE CASCADE
+  FOREIGN KEY (periodo_nombre) REFERENCES periodos_escolares(nombre) ON DELETE CASCADE,
+  FOREIGN KEY (ficha) REFERENCES profesor(ficha)  -- Relación con la tabla profesor
 );
 
-CREATE TABLE profesor_materia (
-  ficha INT(4) UNSIGNED ZEROFILL,
-  clave_materia VARCHAR(255),
-  periodo_nombre VARCHAR(255),
-  FOREIGN KEY (ficha) REFERENCES profesor(ficha),
-  FOREIGN KEY (clave_materia) REFERENCES materias(clave_materia),
-  FOREIGN KEY (periodo_nombre) REFERENCES periodos_escolares(nombre) ON DELETE CASCADE,
-  PRIMARY KEY (ficha, clave_materia)
+CREATE TABLE usuario (
+  ficha INT(4) UNSIGNED ZEROFILL PRIMARY KEY,
+  contraseña VARCHAR(255) NOT NULL,
+  refresh_token VARCHAR(255),
+  FOREIGN KEY (ficha) REFERENCES profesor(ficha)
 );
 
-CREATE TABLE profesor_grupo (
-  ficha INT(4) UNSIGNED ZEROFILL,
-  clave_grupo VARCHAR(255),
-  periodo_nombre VARCHAR(255),
-  FOREIGN KEY (ficha) REFERENCES profesor(ficha),
-  FOREIGN KEY (clave_grupo) REFERENCES grupos(clave_grupo),
-  FOREIGN KEY (periodo_nombre) REFERENCES periodos_escolares(nombre) ON DELETE CASCADE,
-  PRIMARY KEY (ficha, clave_grupo)
+CREATE TABLE rol (
+  id INT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE permiso (
+  id INT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE usuario_rol (
+  usuario_ficha INT(4) UNSIGNED ZEROFILL,
+  rol_id INT,
+  PRIMARY KEY (usuario_ficha, rol_id),
+  FOREIGN KEY (usuario_ficha) REFERENCES usuario(ficha),
+  FOREIGN KEY (rol_id) REFERENCES rol(id)
+);
+
+CREATE TABLE rol_permiso (
+  rol_id INT,
+  permiso_id INT,
+  PRIMARY KEY (rol_id, permiso_id),
+  FOREIGN KEY (rol_id) REFERENCES rol(id),
+  FOREIGN KEY (permiso_id) REFERENCES permiso(id)
+);
+
+CREATE TABLE tokens (
+  token VARCHAR(256) PRIMARY KEY,
+  expiracion INT NOT NULL,
+  usuario_ficha INT(4) UNSIGNED ZEROFILL,
+  ip_cliente VARCHAR(45),
+  user_agent VARCHAR(255),
+  fecha_creacion DATETIME,
+  fecha_expiracion DATETIME,
+  FOREIGN KEY (usuario_ficha) REFERENCES usuario(ficha)
 );
 
 CREATE TABLE unidades (
@@ -85,9 +111,7 @@ CREATE TABLE reportes (
   reporte VARCHAR(255),
   clave_grupo VARCHAR(255),
   numero_unidad INT,
-  periodo_nombre VARCHAR(255),
   FOREIGN KEY (clave_grupo, numero_unidad) REFERENCES unidades(clave_grupo, numero_unidad),
-  FOREIGN KEY (periodo_nombre) REFERENCES periodos_escolares(nombre) ON DELETE CASCADE,
   PRIMARY KEY (reporte, clave_grupo, numero_unidad)
 );
 
@@ -101,11 +125,14 @@ CREATE TABLE reporte_final (
   porcentaje_reprobacion FLOAT,
   porcentaje_desercion FLOAT,
   promedio_unidad FLOAT,
-  periodo_nombre VARCHAR(255),
   PRIMARY KEY (clave_grupo, periodo_nombre),
-  FOREIGN KEY (clave_grupo) REFERENCES grupos(clave_grupo),
-  FOREIGN KEY (periodo_nombre) REFERENCES periodos_escolares(nombre)
+  FOREIGN KEY (clave_grupo) REFERENCES grupos(clave_grupo)
 );
+
+INSERT INTO usuario (ficha, contraseña)
+VALUES (1234, 'contraseña_profesor1');
+INSERT INTO usuario (ficha, contraseña)
+VALUES (5678, 'contraseña_profesor2');
 
 INSERT INTO periodos_escolares (nombre, fecha_inicio, fecha_fin) 
 VALUES ('Primer Semestre 2023', '2023-01-01', '2023-06-30');
@@ -119,23 +146,14 @@ INSERT INTO carrera (id, nombre) VALUES (2, 'Ingeniería Industrial');
 INSERT INTO profesor (ficha, nombre, departamento_id) VALUES (1234, 'Juan Pérez', 2);
 INSERT INTO profesor (ficha, nombre, departamento_id) VALUES (5678, 'María Rodríguez', 2);
 
-INSERT INTO materias (clave_materia, nombre, unidades, carrera_id) VALUES ('1502', 'Fundamentos de Programación', 4, 1);
-INSERT INTO materias (clave_materia, nombre, unidades, carrera_id) VALUES ('750D', 'Programación Web', 3, 1);
-INSERT INTO materias (clave_materia, nombre, unidades, carrera_id) VALUES ('850F', 'Programación Web para Móviles', 3, 1);
+INSERT INTO materias (clave_materia, clave_asignatura, nombre, unidades, carrera_id) VALUES ('1502', 'CB104', 'Fundamentos de Programación', 4, 1);
+INSERT INTO materias (clave_materia, clave_asignatura, nombre, unidades, carrera_id) VALUES ('750D', 'CB225', 'Programación Web', 3, 1);
+INSERT INTO materias (clave_materia, clave_asignatura, nombre, unidades, carrera_id) VALUES ('850F', 'CB231', 'Programación Web para Móviles', 3, 1);
 
-INSERT INTO grupos (clave_grupo, clave_materia, grupo, periodo_nombre) VALUES ('1502-A', '1502', 'A', 'Primer Semestre 2023');
-INSERT INTO grupos (clave_grupo, clave_materia, grupo, periodo_nombre) VALUES ('1502-D', '1502', 'D', 'Primer Semestre 2023');
-INSERT INTO grupos (clave_grupo, clave_materia, grupo, periodo_nombre) VALUES ('750D-B', '750D', 'B', 'Primer Semestre 2023');
-INSERT INTO grupos (clave_grupo, clave_materia, grupo, periodo_nombre) VALUES ('850F-A', '850F', 'A', 'Primer Semestre 2023');
-
-INSERT INTO profesor_materia (ficha, clave_materia, periodo_nombre) VALUES (1234, '1502', 'Primer Semestre 2023');
-INSERT INTO profesor_materia (ficha, clave_materia, periodo_nombre) VALUES (5678, '1502', 'Primer Semestre 2023');
-INSERT INTO profesor_materia (ficha, clave_materia, periodo_nombre) VALUES (5678, '750D', 'Primer Semestre 2023');
-
-INSERT INTO profesor_grupo (ficha, clave_grupo, periodo_nombre) VALUES (1234, '1502-A', 'Primer Semestre 2023');
-INSERT INTO profesor_grupo (ficha, clave_grupo, periodo_nombre) VALUES (1234, '1502-D', 'Primer Semestre 2023');
-INSERT INTO profesor_grupo (ficha, clave_grupo, periodo_nombre) VALUES (5678, '750D-B', 'Primer Semestre 2023');
-INSERT INTO profesor_grupo (ficha, clave_grupo, periodo_nombre) VALUES (5678, '850F-A', 'Primer Semestre 2023');
+INSERT INTO grupos (clave_grupo, ficha, clave_materia, grupo, periodo_nombre) VALUES ('1502-A', 1234, '1502', 'A', 'Primer Semestre 2023');
+INSERT INTO grupos (clave_grupo, ficha, clave_materia, grupo, periodo_nombre) VALUES ('1502-D', 1234, '1502', 'D', 'Primer Semestre 2023');
+INSERT INTO grupos (clave_grupo, ficha, clave_materia, grupo, periodo_nombre) VALUES ('750D-B', 5678, '750D', 'B', 'Primer Semestre 2023');
+INSERT INTO grupos (clave_grupo, ficha, clave_materia, grupo, periodo_nombre) VALUES ('850F-A', 5678, '850F', 'A', 'Primer Semestre 2023');
 
 INSERT INTO unidades (clave_grupo, numero_unidad, total_alumnos, alumnos_aprobados, alumnos_reprobados, alumnos_desertores, porcentaje_aprobacion, porcentaje_reprobacion, porcentaje_desercion, promedio_grupo, periodo_nombre)
 VALUES ('1502-A', 1, 30, 20, 5, 5, 66.67, 16.67, 16.67, 85.4, 'Primer Semestre 2023');
