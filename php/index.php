@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Materias y Tareas</title>
+    <link rel="stylesheet" type="text/css" href="../css/styles.css">
     <script src="../js/index.js"></script>
 </head>
 <body>
@@ -39,8 +40,8 @@
     <tr>
       <td>Alumnos</td>
       <td>
-        <button id="alumnos-30-btn" class="button">30 alumnos</button>
-        <button id="alumnos-40-btn" class="button">40 alumnos</button>
+        <button id="alumnos-30-btn" class="button alumnos-button">30 alumnos</button>
+        <button id="alumnos-40-btn" class="button alumnos-button">40 alumnos</button>
       </td>
     </tr>
   </table>
@@ -60,10 +61,9 @@ if ($conn->connect_error) {
     die("Error en la conexión: " . $conn->connect_error);
 }
 
-// Consulta SQL para obtener los datos de profesor_grupo junto con los datos de materias
-$sql = "SELECT pg.clave_grupo, m.nombre AS nombre_materia, m.unidades
-        FROM profesor_grupo pg
-        INNER JOIN grupos g ON pg.clave_grupo = g.clave_grupo
+// Consulta SQL para obtener los datos de materias y grupos, incluyendo el número de unidades
+$sql = "SELECT m.nombre AS nombre_materia, g.clave_grupo, m.unidades
+        FROM grupos g
         INNER JOIN materias m ON g.clave_materia = m.clave_materia";
 
 // Ejecutar la consulta

@@ -1,6 +1,6 @@
-CREATE DATABASE reportes_escolares;
+CREATE DATABASE reportes;
 
-USE reportes_escolares;
+USE reportes;
 
 CREATE TABLE periodos_escolares (
   nombre VARCHAR(255) PRIMARY KEY,
@@ -46,48 +46,15 @@ CREATE TABLE grupos (
   FOREIGN KEY (ficha) REFERENCES profesor(ficha)  -- Relación con la tabla profesor
 );
 
-CREATE TABLE usuario (
-  ficha INT(4) UNSIGNED ZEROFILL PRIMARY KEY,
-  contraseña VARCHAR(255) NOT NULL,
-  refresh_token VARCHAR(255),
-  FOREIGN KEY (ficha) REFERENCES profesor(ficha)
-);
-
 CREATE TABLE rol (
   id INT PRIMARY KEY,
   nombre VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE permiso (
-  id INT PRIMARY KEY,
-  nombre VARCHAR(50) NOT NULL
-);
-
-CREATE TABLE usuario_rol (
-  usuario_ficha INT(4) UNSIGNED ZEROFILL,
-  rol_id INT,
-  PRIMARY KEY (usuario_ficha, rol_id),
-  FOREIGN KEY (usuario_ficha) REFERENCES usuario(ficha),
-  FOREIGN KEY (rol_id) REFERENCES rol(id)
-);
-
-CREATE TABLE rol_permiso (
-  rol_id INT,
-  permiso_id INT,
-  PRIMARY KEY (rol_id, permiso_id),
-  FOREIGN KEY (rol_id) REFERENCES rol(id),
-  FOREIGN KEY (permiso_id) REFERENCES permiso(id)
-);
-
-CREATE TABLE tokens (
-  token VARCHAR(256) PRIMARY KEY,
-  expiracion INT NOT NULL,
-  usuario_ficha INT(4) UNSIGNED ZEROFILL,
-  ip_cliente VARCHAR(45),
-  user_agent VARCHAR(255),
-  fecha_creacion DATETIME,
-  fecha_expiracion DATETIME,
-  FOREIGN KEY (usuario_ficha) REFERENCES usuario(ficha)
+CREATE TABLE usuario (
+  profesor_ficha INT(4) UNSIGNED ZEROFILL PRIMARY KEY,
+  contraseña VARCHAR(255) NOT NULL,
+  FOREIGN KEY (profesor_ficha) REFERENCES profesor(ficha)
 );
 
 CREATE TABLE unidades (
@@ -125,14 +92,9 @@ CREATE TABLE reporte_final (
   porcentaje_reprobacion FLOAT,
   porcentaje_desercion FLOAT,
   promedio_unidad FLOAT,
-  PRIMARY KEY (clave_grupo, periodo_nombre),
+  PRIMARY KEY (clave_grupo),
   FOREIGN KEY (clave_grupo) REFERENCES grupos(clave_grupo)
 );
-
-INSERT INTO usuario (ficha, contraseña)
-VALUES (1234, 'contraseña_profesor1');
-INSERT INTO usuario (ficha, contraseña)
-VALUES (5678, 'contraseña_profesor2');
 
 INSERT INTO periodos_escolares (nombre, fecha_inicio, fecha_fin) 
 VALUES ('Primer Semestre 2023', '2023-01-01', '2023-06-30');
@@ -146,14 +108,21 @@ INSERT INTO carrera (id, nombre) VALUES (2, 'Ingeniería Industrial');
 INSERT INTO profesor (ficha, nombre, departamento_id) VALUES (1234, 'Juan Pérez', 2);
 INSERT INTO profesor (ficha, nombre, departamento_id) VALUES (5678, 'María Rodríguez', 2);
 
-INSERT INTO materias (clave_materia, clave_asignatura, nombre, unidades, carrera_id) VALUES ('1502', 'CB104', 'Fundamentos de Programación', 4, 1);
-INSERT INTO materias (clave_materia, clave_asignatura, nombre, unidades, carrera_id) VALUES ('750D', 'CB225', 'Programación Web', 3, 1);
-INSERT INTO materias (clave_materia, clave_asignatura, nombre, unidades, carrera_id) VALUES ('850F', 'CB231', 'Programación Web para Móviles', 3, 1);
+INSERT INTO materias (clave_materia, clave_asignatura, nombre, unidades, carrera_id) 
+VALUES ('1502', 'CB104', 'Fundamentos de Programación', 4, 1);
+INSERT INTO materias (clave_materia, clave_asignatura, nombre, unidades, carrera_id) 
+VALUES ('750D', 'CB225', 'Programación Web', 3, 1);
+INSERT INTO materias (clave_materia, clave_asignatura, nombre, unidades, carrera_id) 
+VALUES ('850F', 'CB231', 'Programación Web para Móviles', 3, 1);
 
-INSERT INTO grupos (clave_grupo, ficha, clave_materia, grupo, periodo_nombre) VALUES ('1502-A', 1234, '1502', 'A', 'Primer Semestre 2023');
-INSERT INTO grupos (clave_grupo, ficha, clave_materia, grupo, periodo_nombre) VALUES ('1502-D', 1234, '1502', 'D', 'Primer Semestre 2023');
-INSERT INTO grupos (clave_grupo, ficha, clave_materia, grupo, periodo_nombre) VALUES ('750D-B', 5678, '750D', 'B', 'Primer Semestre 2023');
-INSERT INTO grupos (clave_grupo, ficha, clave_materia, grupo, periodo_nombre) VALUES ('850F-A', 5678, '850F', 'A', 'Primer Semestre 2023');
+INSERT INTO grupos (clave_grupo, ficha, clave_materia, grupo, periodo_nombre) 
+VALUES ('1502-A', 1234, '1502', 'A', 'Primer Semestre 2023');
+INSERT INTO grupos (clave_grupo, ficha, clave_materia, grupo, periodo_nombre) 
+VALUES ('1502-D', 1234, '1502', 'D', 'Primer Semestre 2023');
+INSERT INTO grupos (clave_grupo, ficha, clave_materia, grupo, periodo_nombre) 
+VALUES ('750D-B', 5678, '750D', 'B', 'Primer Semestre 2023');
+INSERT INTO grupos (clave_grupo, ficha, clave_materia, grupo, periodo_nombre) 
+VALUES ('850F-A', 5678, '850F', 'A', 'Primer Semestre 2023');
 
 INSERT INTO unidades (clave_grupo, numero_unidad, total_alumnos, alumnos_aprobados, alumnos_reprobados, alumnos_desertores, porcentaje_aprobacion, porcentaje_reprobacion, porcentaje_desercion, promedio_grupo, periodo_nombre)
 VALUES ('1502-A', 1, 30, 20, 5, 5, 66.67, 16.67, 16.67, 85.4, 'Primer Semestre 2023');
@@ -164,11 +133,16 @@ VALUES ('750D-B', 1, 25, 20, 4, 1, 80, 16, 4, 7.8, 'Primer Semestre 2023');
 INSERT INTO unidades (clave_grupo, numero_unidad, total_alumnos, alumnos_aprobados, alumnos_reprobados, alumnos_desertores, porcentaje_aprobacion, porcentaje_reprobacion, porcentaje_desercion, promedio_grupo, periodo_nombre) 
 VALUES ('850F-A', 1, 35, 30, 3, 2, 85.71, 8.57, 5.71, 8.9, 'Primer Semestre 2023');
 
-INSERT INTO reportes (reporte, clave_grupo, numero_unidad, periodo_nombre)
-VALUES ('Reporte Parcial 1', '1502-A', 1, 'Primer Semestre 2023');
-INSERT INTO reportes (reporte, clave_grupo, numero_unidad, periodo_nombre)
-VALUES ('Reporte Parcial 1', '1502-A', 2, 'Primer Semestre 2023');
-INSERT INTO reportes (reporte, clave_grupo, numero_unidad, periodo_nombre)
-VALUES ('Reporte Parcial 1', '750D-B', 1, 'Primer Semestre 2023');
-INSERT INTO reportes (reporte, clave_grupo, numero_unidad, periodo_nombre)
-VALUES ('Reporte Parcial 1', '850F-A', 1, 'Primer Semestre 2023');
+INSERT INTO reportes (reporte, clave_grupo, numero_unidad)
+VALUES ('Reporte Parcial 1', '1502-A', 1);
+INSERT INTO reportes (reporte, clave_grupo, numero_unidad)
+VALUES ('Reporte Parcial 1', '1502-A', 2);
+INSERT INTO reportes (reporte, clave_grupo, numero_unidad)
+VALUES ('Reporte Parcial 1', '750D-B', 1);
+INSERT INTO reportes (reporte, clave_grupo, numero_unidad)
+VALUES ('Reporte Parcial 1', '850F-A', 1);
+
+INSERT INTO usuario (profesor_ficha, contraseña)
+VALUES (1234, 'contraseña_profesor1');
+INSERT INTO usuario (profesor_ficha, contraseña)
+VALUES (5678, 'contraseña_profesor2');

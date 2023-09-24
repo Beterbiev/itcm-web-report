@@ -3,6 +3,7 @@
 <head>
   <title>Carga Manual</title>
   <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="../css/styles.css">
   <script src="../js/carga_manual.js" charset="UTF-8"></script>
 </head>
 <body>
@@ -16,9 +17,7 @@
     </tr>
     <tr>
       <th>Materia</th>
-      <td>
-        <select id="materia-select"></select>
-      </td>
+      <td id="materia-label"></td>
     </tr>
     <tr>
       <th>Grupo</th>
@@ -65,7 +64,7 @@
     <button id="guardar-btn" class="button">Registrar</button>
   </div>
 
-<?php
+  <?php
 // Realizar la conexión a la base de datos
 $servername = "localhost";
 $username = "root";
@@ -80,9 +79,32 @@ if ($conn->connect_error) {
     die("Error en la conexión: " . $conn->connect_error);
 }
 
+// Consulta SQL para obtener los datos de materias y grupos, incluyendo el número de unidades
+$sql = "SELECT m.nombre AS nombre_materia, g.clave_grupo, m.unidades
+        FROM grupos g
+        INNER JOIN materias m ON g.clave_materia = m.clave_materia";
+
+// Ejecutar la consulta
+$result = $conn->query($sql);
+
+// Crear un array para almacenar los datos
+$data = array();
+
+// Obtener los datos de la consulta
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+}
+
 // Cerrar la conexión
 $conn->close();
-?>
 
+// Convertir el array PHP a formato JSON
+$jsonData = json_encode($data);
+
+// Imprimir los datos en un script para que el archivo JS pueda acceder a ellos
+echo "<script> var datos = $jsonData;</script>";
+?>
 </body>
 </html>
