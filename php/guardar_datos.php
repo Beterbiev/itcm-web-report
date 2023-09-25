@@ -27,34 +27,53 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    // Acceder a los campos directamente y asignarlos a las variables
-    $clave_grupo = $data->clave_grupo;
-    $numero_unidad = $data->numero_unidad;
-    $total_alumnos = $data->total_alumnos;
-    $alumnos_aprobados = $data->alumnos_aprobados;
-    $alumnos_reprobados = $data->alumnos_reprobados;
-    $alumnos_desertores = $data->alumnos_desertores;
-    $porcentaje_aprobacion = $data->porcentaje_aprobacion;
-    $porcentaje_reprobacion = $data->porcentaje_reprobacion;
-    $porcentaje_desercion = $data->porcentaje_desercion;
-    $promedio_grupo = $data->promedio_grupo;
-    $periodo_nombre = $data->periodo_nombre;
+    // Verificar si se proporcionó clave_grupo y numero_unidad para identificar la actualización
+    if (isset($data->clave_grupo) && isset($data->numero_unidad)) {
+        // Es una actualización
+        $clave_grupo = $data->clave_grupo;
+        $numero_unidad = $data->numero_unidad;
+        $total_alumnos = $data->total_alumnos;
+        $alumnos_aprobados = $data->alumnos_aprobados;
+        $alumnos_reprobados = $data->alumnos_reprobados;
+        $alumnos_desertores = $data->alumnos_desertores;
+        $porcentaje_aprobacion = $data->porcentaje_aprobacion;
+        $porcentaje_reprobacion = $data->porcentaje_reprobacion;
+        $porcentaje_desercion = $data->porcentaje_desercion;
+        $promedio_grupo = $data->promedio_grupo;
+        $periodo_nombre = $data->periodo_nombre;
 
-    // Construir la consulta SQL y ejecutarla
-    $sql = "INSERT INTO unidades (clave_grupo, numero_unidad, total_alumnos, alumnos_aprobados, alumnos_reprobados, alumnos_desertores, porcentaje_aprobacion, porcentaje_reprobacion, porcentaje_desercion, promedio_grupo, periodo_nombre) VALUES ('$clave_grupo', $numero_unidad, $total_alumnos, $alumnos_aprobados, $alumnos_reprobados, $alumnos_desertores, $porcentaje_aprobacion, $porcentaje_reprobacion, $porcentaje_desercion, $promedio_grupo, '$periodo_nombre')";
+        // Construir la consulta SQL de actualización
+        $sql = "UPDATE unidades SET total_alumnos = $total_alumnos, alumnos_aprobados = $alumnos_aprobados, alumnos_reprobados = $alumnos_reprobados, alumnos_desertores = $alumnos_desertores, porcentaje_aprobacion = $porcentaje_aprobacion, porcentaje_reprobacion = $porcentaje_reprobacion, porcentaje_desercion = $porcentaje_desercion, promedio_grupo = $promedio_grupo, periodo_nombre = '$periodo_nombre' WHERE clave_grupo = '$clave_grupo' AND numero_unidad = $numero_unidad";
+    } else {
+        // Es una inserción
+        $clave_grupo = $data->clave_grupo;
+        $numero_unidad = $data->numero_unidad;
+        $total_alumnos = $data->total_alumnos;
+        $alumnos_aprobados = $data->alumnos_aprobados;
+        $alumnos_reprobados = $data->alumnos_reprobados;
+        $alumnos_desertores = $data->alumnos_desertores;
+        $porcentaje_aprobacion = $data->porcentaje_aprobacion;
+        $porcentaje_reprobacion = $data->porcentaje_reprobacion;
+        $porcentaje_desercion = $data->porcentaje_desercion;
+        $promedio_grupo = $data->promedio_grupo;
+        $periodo_nombre = $data->periodo_nombre;
+
+        // Construir la consulta SQL de inserción
+        $sql = "INSERT INTO unidades (clave_grupo, numero_unidad, total_alumnos, alumnos_aprobados, alumnos_reprobados, alumnos_desertores, porcentaje_aprobacion, porcentaje_reprobacion, porcentaje_desercion, promedio_grupo, periodo_nombre) VALUES ('$clave_grupo', $numero_unidad, $total_alumnos, $alumnos_aprobados, $alumnos_reprobados, $alumnos_desertores, $porcentaje_aprobacion, $porcentaje_reprobacion, $porcentaje_desercion, $promedio_grupo, '$periodo_nombre')";
+    }
 
     if ($conn->query($sql) === TRUE) {
-        // Inserción exitosa
+        // Inserción o actualización exitosa
         // Cerrar la conexión
         $conn->close();
 
         // Responder con un mensaje de éxito
-        $response = array("mensaje" => "Datos insertados con éxito.");
+        $response = array("mensaje" => "Datos guardados con éxito.");
         echo json_encode($response);
         exit;
     } else {
         http_response_code(500); // Internal Server Error
-        echo json_encode(array("mensaje" => "Error al insertar datos: " . $conn->error));
+        echo json_encode(array("mensaje" => "Error al guardar los datos: " . $conn->error));
         exit;
     }
 } else {
