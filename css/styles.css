@@ -67,14 +67,16 @@ table th, table td {
 }
 
 /* Estilos para filas pares */
-table tr:nth-child(even) {
+#tablaDatos tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 
+
 /* Estilos para filas impares */
-table tr:nth-child(odd) {
+#tablaDatos tr:nth-child(odd) {
     background-color: #fff;
 }
+
 
 /* Estilos para los botones */
 .button {

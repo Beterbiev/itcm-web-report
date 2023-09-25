@@ -8,7 +8,7 @@
 </head>
 <body>
 <h1>Administrar Grupos</h1>
-<table>
+<table id="tablaDatos">
   <thead>
     <tr>
       <th>Materia</th>

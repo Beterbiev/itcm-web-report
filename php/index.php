@@ -51,7 +51,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "reportes_escolares";
+$dbname = "reportes";
 $port = 3306;
 
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
@@ -62,9 +62,9 @@ if ($conn->connect_error) {
 }
 
 // Consulta SQL para obtener los datos de materias y grupos, incluyendo el número de unidades
-$sql = "SELECT m.nombre AS nombre_materia, g.clave_grupo, m.unidades
-        FROM grupos g
-        INNER JOIN materias m ON g.clave_materia = m.clave_materia";
+$sql = "SELECT g.clave_grupo, m.nombre AS nombre_materia, g.grupo, g.periodo_nombre, m.unidades
+              FROM grupos AS g
+              INNER JOIN materias AS m ON g.clave_materia = m.clave_materia";
 
 // Ejecutar la consulta
 $result = $conn->query($sql);
